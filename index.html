@@ -1,658 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WRC Private — Tickets & Membership</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --gold:    #C9A84C;
-      --gold2:   #E8C96A;
-      --dark:    #0C0C0C;
-      --surface: #141414;
-      --card:    #1A1A1A;
-      --border:  #2A2A2A;
-      --white:   #F5F0E8;
-      --muted:   #6E6E6E;
-      --error:   #E05555;
-      --green:   #3D9970;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--dark);
-      color: var(--white);
-      font-family: 'DM Sans', sans-serif;
-      min-height: 100vh;
-    }
-
-    /* ── HERO ── */
-    .hero {
-      position: relative;
-      background: linear-gradient(160deg, #0C0C0C 60%, #1A1408 100%);
-      border-bottom: 1px solid var(--border);
-      padding: 56px 24px 52px;
-      text-align: center;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,0.12) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .badge {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--gold);
-      border: 1px solid rgba(201,168,76,0.35);
-      border-radius: 100px;
-      padding: 5px 16px;
-      margin-bottom: 24px;
-    }
-
-    .hero-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(38px, 8vw, 72px);
-      font-weight: 900;
-      line-height: 1.05;
-      letter-spacing: -0.01em;
-      color: var(--white);
-      margin-bottom: 8px;
-    }
-
-    .hero-title span {
-      color: var(--gold);
-    }
-
-    .hero-sub {
-      font-size: 15px;
-      color: var(--muted);
-      max-width: 380px;
-      margin: 16px auto 0;
-      line-height: 1.7;
-    }
-
-    .divider-gold {
-      width: 48px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      margin: 28px auto 0;
-    }
-
-    /* ── MAIN ── */
-    main {
-      max-width: 520px;
-      margin: 0 auto;
-      padding: 40px 20px 80px;
-    }
-
-    .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 16px;
-    }
-
-    /* ── CARDS ── */
-    .options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 36px;
-    }
-
-    .option-card {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 22px 18px;
-      cursor: pointer;
-      background: var(--card);
-      transition: border-color 0.2s, background 0.2s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .option-card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(201,168,76,0.06) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    .option-card:hover { border-color: #3A3A3A; }
-    .option-card:hover::after { opacity: 1; }
-
-    .option-card.selected {
-      border-color: var(--gold);
-      background: #1C1810;
-    }
-
-    .option-card.selected::after { opacity: 1; }
-
-    .option-type {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 8px;
-    }
-
-    .option-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      color: var(--white);
-    }
-
-    .option-price {
-      font-size: 22px;
-      font-weight: 600;
-      color: var(--gold2);
-      margin-top: 12px;
-    }
-
-    .option-price span {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 400;
-    }
-
-    .option-desc {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.5;
-      margin-top: 4px;
-    }
-
-    .check-dot {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .option-card.selected .check-dot {
-      border-color: var(--gold);
-      background: var(--gold);
-    }
-
-    .option-card.selected .check-dot::after {
-      content: '✓';
-      font-size: 11px;
-      color: #000;
-      font-weight: 700;
-    }
-
-    /* ── FORM ── */
-    .form-wrap {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px;
-    }
-
-    .field { margin-bottom: 20px; }
-
-    .field label {
-      display: block;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .field input {
-      width: 100%;
-      background: var(--dark);
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      color: var(--white);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      padding: 13px 16px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .field input:focus { border-color: var(--gold); }
-    .field input::placeholder { color: #3A3A3A; }
-
-    .phone-row {
-      display: flex;
-      gap: 10px;
-    }
-
-    .prefix {
-      background: var(--dark);
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      color: var(--muted);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      padding: 13px 14px;
-      width: 72px;
-      text-align: center;
-      flex-shrink: 0;
-    }
-
-    .field-error {
-      font-size: 12px;
-      color: var(--error);
-      margin-top: 6px;
-      display: none;
-    }
-
-    /* ── SUMMARY ── */
-    .summary {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #15110A;
-      border: 1px solid rgba(201,168,76,0.25);
-      border-radius: 10px;
-      padding: 16px 18px;
-      margin-bottom: 22px;
-    }
-
-    .summary-left { font-size: 13px; color: var(--muted); }
-    .summary-tier {
-      font-family: 'Playfair Display', serif;
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--white);
-      margin-top: 2px;
-    }
-
-    .summary-amount {
-      font-family: 'Playfair Display', serif;
-      font-size: 26px;
-      font-weight: 900;
-      color: var(--gold);
-    }
-
-    /* ── PAY BUTTON ── */
-    .pay-btn {
-      width: 100%;
-      background: linear-gradient(135deg, var(--gold) 0%, #A8862E 100%);
-      color: #000;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 700;
-      font-size: 15px;
-      letter-spacing: 0.04em;
-      border: none;
-      border-radius: 10px;
-      padding: 17px;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.1s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .pay-btn:hover { opacity: 0.92; }
-    .pay-btn:active { transform: scale(0.98); }
-    .pay-btn:disabled {
-      background: var(--border);
-      color: var(--muted);
-      cursor: not-allowed;
-      opacity: 1;
-    }
-
-    .mpesa-pill {
-      background: rgba(0,0,0,0.25);
-      color: #000;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      padding: 3px 9px;
-      border-radius: 100px;
-    }
-
-    .pay-hint {
-      font-size: 12px;
-      color: var(--muted);
-      text-align: center;
-      margin-top: 14px;
-      line-height: 1.7;
-    }
-
-    /* ── OVERLAY ── */
-    .overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.88);
-      backdrop-filter: blur(8px);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-
-    .overlay.show { display: flex; }
-
-    .modal {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 40px 28px;
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-    }
-
-    .modal-icon { font-size: 52px; margin-bottom: 18px; }
-
-    .modal-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 24px;
-      font-weight: 900;
-      margin-bottom: 10px;
-    }
-
-    .modal-msg {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.7;
-      margin-bottom: 28px;
-    }
-
-    .receipt-box {
-      background: var(--dark);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 24px;
-      text-align: left;
-    }
-
-    .receipt-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      padding: 5px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .receipt-row:last-child { border-bottom: none; }
-    .receipt-row .rkey { color: var(--muted); }
-    .receipt-row .rval { font-weight: 600; color: var(--white); }
-    .receipt-code { color: var(--gold); font-weight: 700; }
-
-    .spinner {
-      width: 48px;
-      height: 48px;
-      border: 3px solid var(--border);
-      border-top-color: var(--gold);
-      border-radius: 50%;
-      animation: spin 0.75s linear infinite;
-      margin: 0 auto 20px;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .modal-btn {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--white);
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 600;
-      font-size: 14px;
-      padding: 12px 32px;
-      border-radius: 9px;
-      cursor: pointer;
-      transition: border-color 0.2s;
-    }
-
-    .modal-btn:hover { border-color: var(--gold); }
-
-    .modal-btn.gold {
-      background: linear-gradient(135deg, var(--gold) 0%, #A8862E 100%);
-      border: none;
-      color: #000;
-      font-weight: 700;
-    }
-
-    /* ── FOOTER ── */
-    footer {
-      text-align: center;
-      padding: 28px;
-      font-size: 12px;
-      color: #333;
-      border-top: 1px solid var(--border);
-    }
-
-    @media (max-width: 400px) {
-      .options { grid-template-columns: 1fr; }
-      .form-wrap { padding: 20px 16px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WRC Private — Discover Your Circle</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080808;--gold:#B8962E;--gl:#D4AF5A;--tx:#F8F5EF;--mute:rgba(248,245,239,.55);--bd:rgba(184,150,46,.2);--pale:rgba(184,150,46,.1)}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'Jost',sans-serif;font-weight:300;line-height:1.7}
+.serif{font-family:'Cormorant Garamond',serif}
+nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:20px 40px;background:rgba(8,8,8,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--bd)}
+.logo{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:500;letter-spacing:9px;text-transform:uppercase;color:var(--gl)}
+.btn{background:var(--gold);color:#080808;border:0;padding:16px 44px;font:500 12px 'Jost',sans-serif;letter-spacing:3.5px;text-transform:uppercase;cursor:pointer;transition:.2s}
+.btn:hover{background:var(--gl);transform:translateY(-2px)}
+.btn.ghost{background:none;border:1px solid var(--gold);color:var(--gold);padding:10px 22px;font-size:11px}
+.btn.ghost:hover{background:var(--gold);color:#080808;transform:none}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:130px 24px 80px;background:radial-gradient(ellipse at top,rgba(184,150,46,.1),transparent 65%)}
+.eyebrow{font-size:10px;letter-spacing:7px;text-transform:uppercase;color:var(--gold);font-weight:400;margin-bottom:26px}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(46px,8vw,96px);line-height:1.02;font-weight:300;letter-spacing:.01em;margin-bottom:30px}
+h1 em{display:block;font-style:italic;background:linear-gradient(135deg,var(--gold),var(--gl),var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.lead{max-width:520px;font-size:18px;letter-spacing:.02em;color:var(--mute);margin-bottom:44px}
+.story{max-width:700px;margin:0 auto;padding:100px 24px;text-align:center;border-top:1px solid var(--bd)}
+.story p{font-size:17px;color:var(--mute);margin-bottom:26px}
+.story p.big{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,3.6vw,36px);color:var(--tx);line-height:1.35;font-weight:300;font-style:italic}
+.tiers{max-width:1000px;margin:0 auto;padding:60px 24px 100px}
+.tiers h2,.close h2{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,5vw,52px);text-align:center;margin-bottom:52px;font-weight:300;letter-spacing:.02em;line-height:1.2}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2px;background:var(--bd)}
+.tier{background:#0f0f0f;padding:44px 34px;text-align:center;position:relative}
+.tier.hot{background:#0d0c09}
+.badge{position:absolute;top:14px;right:14px;background:var(--gold);color:#080808;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 10px}
+.tier h3{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;letter-spacing:.04em;margin-bottom:8px}
+.tier p{font-size:13px;color:var(--mute);margin-bottom:26px;min-height:44px}
+.price{font-family:'Cormorant Garamond',serif;font-size:60px;font-weight:300;color:var(--gl);line-height:1;margin-bottom:28px}
+.price small{font-size:22px;vertical-align:super;color:var(--gold)}
+.tier .btn{width:100%;padding:15px}
+.close{text-align:center;padding:80px 24px 100px;border-top:1px solid var(--bd)}
+.close h2{margin-bottom:34px}
+footer{padding:28px;text-align:center;font-size:11px;color:rgba(255,255,255,.25);border-top:1px solid var(--bd)}
+.banner{display:none;position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:60;background:#0d1a10;border:1px solid rgba(74,222,128,.4);color:#4ade80;padding:14px 24px;font-size:14px}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:99;justify-content:center;align-items:center;padding:20px}
+.ov.on{display:flex}
+.modal{background:#0f0f0f;border:1px solid var(--bd);width:100%;max-width:440px;padding:36px}
+.modal h3{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:400;letter-spacing:.03em;margin-bottom:6px}
+.sum{display:flex;justify-content:space-between;align-items:center;background:var(--pale);border:1px solid var(--bd);padding:14px 18px;margin:20px 0}
+.sum b{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:var(--gl)}
+label{display:block;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--mute);margin:16px 0 6px}
+input{width:100%;background:#161616;border:1px solid rgba(255,255,255,.1);color:var(--tx);padding:13px 14px;font:14px 'Jost',sans-serif;outline:0}
+input:focus{border-color:var(--gold)}
+#msg{display:none;padding:12px;margin-top:16px;font-size:13px;text-align:center;border:1px solid var(--bd);color:#f87171}
+.modal .btn{width:100%;margin-top:22px}
+.note{font-size:11px;color:var(--mute);text-align:center;margin-top:14px}
+.x{background:none;border:0;color:rgba(255,255,255,.3);cursor:pointer;display:block;margin:18px auto 0;font:12px 'Jost',sans-serif}
+@media(max-width:600px){nav{padding:16px 20px}.modal{padding:26px}}
+</style>
 </head>
 <body>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="badge">WRC Private</div>
-  <h1 class="hero-title">Join the<br><span>Inner Circle</span></h1>
-  <p class="hero-sub">Secure your ticket or become a WRC member. Payment via M-Pesa — instant receipt issued.</p>
-  <div class="divider-gold"></div>
-</div>
+<div class="banner" id="banner">Payment received. Welcome to the circle — check your email.</div>
 
-<main>
+<nav>
+  <div class="logo">WRC Private</div>
+  <button class="btn ghost" onclick="go()">Join</button>
+</nav>
 
-  <!-- STEP 1: Choose -->
-  <div class="section-label">Select your access</div>
-  <div class="options">
-    <div class="option-card selected" data-amount="2500" data-tier="Event Ticket" onclick="selectOption(this)">
-      <div class="check-dot"></div>
-      <div class="option-type">One-Time</div>
-      <div class="option-name">Event Ticket</div>
-      <div class="option-desc">Single event admission</div>
-      <div class="option-price">KES 2,500</div>
+<section class="hero">
+  <p class="eyebrow">Private Members Club</p>
+  <h1>A World of Possibility,<em>Within Reach.</em></h1>
+  <p class="lead">Where exceptional minds connect, ambition aligns, and possibilities expand.</p>
+  <button class="btn" onclick="go()">Discover Your Circle</button>
+</section>
+
+<section class="story">
+  <p class="big">Beyond ordinary networking lies a more intentional way to connect.</p>
+  <p>Discover a curated circle of individuals who value meaningful relationships, shared ambition, and the power of being in the right company.</p>
+  <p>Every connection is an opportunity. Every conversation, a possibility. Every introduction, a step toward something greater.</p>
+  <p class="big">Your world is shaped by who you connect with. Make every connection count.</p>
+</section>
+
+<section class="tiers" id="tiers">
+  <h2>Choose Your Access</h2>
+  <div class="grid">
+    <div class="tier">
+      <h3>Privé Access</h3>
+      <p>Your first step into the circle.</p>
+      <div class="price"><small>$</small>1</div>
+      <button class="btn" onclick="openM('prive')">Select</button>
     </div>
-    <div class="option-card" data-amount="10000" data-tier="WRC Membership" onclick="selectOption(this)">
-      <div class="check-dot"></div>
-      <div class="option-type">Full Access</div>
-      <div class="option-name">Membership</div>
-      <div class="option-desc">Exclusive member privileges</div>
-      <div class="option-price">KES 10,000</div>
+    <div class="tier hot">
+      <span class="badge">Popular</span>
+      <h3>Inner Circle Pass</h3>
+      <p>Deeper access to the people and the room.</p>
+      <div class="price"><small>$</small>5</div>
+      <button class="btn" onclick="openM('circle')">Select</button>
+    </div>
+    <div class="tier">
+      <h3>Elite Pass</h3>
+      <p>The highest level of access.</p>
+      <div class="price"><small>$</small>10</div>
+      <button class="btn" onclick="openM('elite')">Select</button>
     </div>
   </div>
+</section>
 
-  <!-- STEP 2: Details + Pay -->
-  <div class="form-wrap">
-    <div class="field">
-      <label>Full Name</label>
-      <input type="text" id="fname" placeholder="Your full name" autocomplete="name"/>
-    </div>
+<section class="close">
+  <h2>Connect with intention.<br>Belong by ambition.<br>Grow beyond limits.</h2>
+  <button class="btn" onclick="go()">Discover Your Circle</button>
+</section>
 
-    <div class="field">
-      <label>ID Number</label>
-      <input type="text" id="idnum" placeholder="National ID number" inputmode="numeric"/>
-    </div>
+<footer>© 2025 WRC Private</footer>
 
-    <div class="field">
-      <label>M-Pesa Phone Number</label>
-      <div class="phone-row">
-        <div class="prefix">+254</div>
-        <input type="tel" id="phone" placeholder="7XX XXX XXX" maxlength="9" inputmode="numeric"/>
-      </div>
-      <div class="field-error" id="phone-err">Enter a valid Safaricom number</div>
-    </div>
-
-    <div class="summary">
-      <div class="summary-left">
-        Paying for
-        <div class="summary-tier" id="sum-tier">Event Ticket</div>
-      </div>
-      <div class="summary-amount" id="sum-amount">KES 2,500</div>
-    </div>
-
-    <button class="pay-btn" id="pay-btn" onclick="pay()">
-      Pay Now <span class="mpesa-pill">M-PESA</span>
-    </button>
-    <p class="pay-hint">You'll receive an M-Pesa PIN prompt on your phone.<br>Enter PIN to confirm. Receipt issued instantly.</p>
+<div class="ov" id="ov" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <h3>Join WRC Private</h3>
+    <div class="sum"><span id="tl"></span><b id="ta"></b></div>
+    <label>Full Name</label>
+    <input id="nm" type="text" placeholder="Your full name" autocomplete="name">
+    <label>Email</label>
+    <input id="em" type="email" placeholder="you@example.com" autocomplete="email">
+    <div id="msg"></div>
+    <button class="btn" id="pb" onclick="pay()">Continue to Payment</button>
+    <p class="note">Secure checkout by Paystack. Card and other methods available.</p>
+    <button class="x" onclick="closeM()">Close</button>
   </div>
-
-</main>
-
-<footer>© 2025 WRC Private · Paybill 4136181</footer>
-
-<!-- OVERLAY -->
-<div class="overlay" id="overlay">
-  <div class="modal" id="modal"></div>
 </div>
 
 <script>
-  const BACKEND = 'https://YOUR-RAILWAY-APP.railway.app'; // ← replace after Railway deploy
-
-  let amount = 2500;
-  let tier = 'Event Ticket';
-  let pollTimer = null;
-
-  function selectOption(el) {
-    document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected');
-    amount = parseInt(el.dataset.amount);
-    tier = el.dataset.tier;
-    document.getElementById('sum-tier').textContent = tier;
-    document.getElementById('sum-amount').textContent = 'KES ' + amount.toLocaleString();
-  }
-
-  function parsePhone(raw) {
-    const c = raw.replace(/\s/g,'');
-    if (!/^[07][0-9]{8}$/.test(c)) return null;
-    return '254' + c.replace(/^0/,'');
-  }
-
-  async function pay() {
-    const name  = document.getElementById('fname').value.trim();
-    const idnum = document.getElementById('idnum').value.trim();
-    const raw   = document.getElementById('phone').value.trim();
-    const phone = parsePhone(raw);
-    const perr  = document.getElementById('phone-err');
-
-    perr.style.display = phone ? 'none' : 'block';
-    if (!name || !idnum || !phone) return;
-
-    document.getElementById('pay-btn').disabled = true;
-    showLoading();
-
-    try {
-      const res = await fetch(`${BACKEND}/stk-push`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, amount, name, id_number: idnum, tier })
-      });
-      const data = await res.json();
-
-      if (!res.ok || data.error) {
-        showError(data.error || 'Payment initiation failed. Try again.');
-        document.getElementById('pay-btn').disabled = false;
-        return;
-      }
-
-      pollResult(data.checkout_request_id, name, idnum);
-
-    } catch(e) {
-      showError('Cannot reach server. Check your connection.');
-      document.getElementById('pay-btn').disabled = false;
-    }
-  }
-
-  function pollResult(cid, name, idnum) {
-    let tries = 0;
-    pollTimer = setInterval(async () => {
-      tries++;
-      if (tries > 24) {
-        clearInterval(pollTimer);
-        showError('Timed out waiting for payment. If you paid, your receipt will be sent via SMS.');
-        document.getElementById('pay-btn').disabled = false;
-        return;
-      }
-      try {
-        const r = await fetch(`${BACKEND}/payment-status/${cid}`);
-        const d = await r.json();
-        if (d.status === 'completed') {
-          clearInterval(pollTimer);
-          showSuccess(name, idnum, d.receipt, tier, amount);
-        } else if (d.status === 'failed') {
-          clearInterval(pollTimer);
-          showError(d.message || 'Transaction was not completed.');
-          document.getElementById('pay-btn').disabled = false;
-        }
-      } catch(_) {}
-    }, 3000);
-  }
-
-  function showLoading() {
-    document.getElementById('overlay').classList.add('show');
-    document.getElementById('modal').innerHTML = `
-      <div class="spinner"></div>
-      <div class="modal-title">Sending prompt…</div>
-      <div class="modal-msg">Check your phone for the M-Pesa PIN request.<br>Do not close this page.</div>`;
-  }
-
-  function showSuccess(name, idnum, receipt, tier, amount) {
-    const ref = 'WRC-' + Date.now().toString(36).toUpperCase();
-    document.getElementById('modal').innerHTML = `
-      <div class="modal-icon">🏅</div>
-      <div class="modal-title" style="color:var(--gold)">Payment Confirmed</div>
-      <div class="modal-msg">Welcome to WRC Private. Your receipt is below.</div>
-      <div class="receipt-box">
-        <div class="receipt-row"><span class="rkey">Name</span><span class="rval">${name}</span></div>
-        <div class="receipt-row"><span class="rkey">ID Number</span><span class="rval">${idnum}</span></div>
-        <div class="receipt-row"><span class="rkey">Access</span><span class="rval">${tier}</span></div>
-        <div class="receipt-row"><span class="rkey">Amount</span><span class="rval">KES ${amount.toLocaleString()}</span></div>
-        <div class="receipt-row"><span class="rkey">M-Pesa Ref</span><span class="rval receipt-code">${receipt || 'PENDING'}</span></div>
-        <div class="receipt-row"><span class="rkey">WRC Ref</span><span class="rval receipt-code">${ref}</span></div>
-        <div class="receipt-row"><span class="rkey">Paybill</span><span class="rval">4136181</span></div>
-        <div class="receipt-row"><span class="rkey">Date</span><span class="rval">${new Date().toLocaleString('en-KE')}</span></div>
-      </div>
-      <button class="modal-btn gold" onclick="window.print()">Save Receipt</button>
-      &nbsp;
-      <button class="modal-btn" onclick="closeModal()">Done</button>`;
-  }
-
-  function showError(msg) {
-    document.getElementById('modal').innerHTML = `
-      <div class="modal-icon">⚠️</div>
-      <div class="modal-title" style="color:var(--error)">Payment Failed</div>
-      <div class="modal-msg">${msg}</div>
-      <button class="modal-btn" onclick="closeModal()">Try Again</button>`;
-  }
-
-  function closeModal() {
-    document.getElementById('overlay').classList.remove('show');
-    if (pollTimer) clearInterval(pollTimer);
-  }
+var API='https://wrc-backend-production.up.railway.app/pay';
+var T={prive:['Privé Access',1],circle:['Inner Circle Pass',5],elite:['Elite Pass',10]};
+var tier='prive';
+function go(){document.getElementById('tiers').scrollIntoView({behavior:'smooth'})}
+function openM(t){tier=t;document.getElementById('tl').textContent=T[t][0];document.getElementById('ta').textContent='$'+T[t][1];document.getElementById('msg').style.display='none';document.getElementById('ov').classList.add('on')}
+function closeM(){document.getElementById('ov').classList.remove('on')}
+function err(m){var e=document.getElementById('msg');e.textContent=m;e.style.display='block'}
+async function pay(){
+  var n=document.getElementById('nm').value.trim(),e=document.getElementById('em').value.trim(),b=document.getElementById('pb');
+  if(!n)return err('Please enter your full name.');
+  if(!/^\S+@\S+\.\S+$/.test(e))return err('Please enter a valid email.');
+  b.disabled=true;b.textContent='Redirecting…';
+  try{
+    var r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({full_name:n,email:e,tier:tier})});
+    var d=await r.json();
+    if(r.ok&&d.authorization_url){window.location.href=d.authorization_url;return}
+    throw new Error(d.error||'Could not start payment.');
+  }catch(x){err(x.message);b.disabled=false;b.textContent='Continue to Payment'}
+}
+if(new URLSearchParams(location.search).get('paid')){var bn=document.getElementById('banner');bn.style.display='block';setTimeout(function(){bn.style.display='none'},8000)}
 </script>
 </body>
 </html>
