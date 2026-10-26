@@ -85,20 +85,20 @@ input:focus{border-color:var(--gold)}
     <div class="tier">
       <h3>Privé Access</h3>
       <p>Your first step into the circle.</p>
-      <div class="price"><small>$</small>1</div>
+      <div class="price"><small>$</small>10</div>
       <button class="btn" onclick="openM('prive')">Select</button>
     </div>
     <div class="tier hot">
       <span class="badge">Popular</span>
       <h3>Inner Circle Pass</h3>
       <p>Deeper access to the people and the room.</p>
-      <div class="price"><small>$</small>5</div>
+      <div class="price"><small>$</small>20</div>
       <button class="btn" onclick="openM('circle')">Select</button>
     </div>
     <div class="tier">
       <h3>Elite Pass</h3>
       <p>The highest level of access.</p>
-      <div class="price"><small>$</small>10</div>
+      <div class="price"><small>$</small>50</div>
       <button class="btn" onclick="openM('elite')">Select</button>
     </div>
   </div>
@@ -128,8 +128,7 @@ input:focus{border-color:var(--gold)}
 
 <script>
 var API='https://wrc-backend.onrender.com/pay';
-var T={prive:['Privé Access',1],circle:['Inner Circle Pass',5],elite:['Elite Pass',10]};
-var tier='prive';
+var T={prive:['Privé Access',10],circle:['Inner Circle Pass',20],elite:['Elite Pass',50]};
 function go(){document.getElementById('tiers').scrollIntoView({behavior:'smooth'})}
 function openM(t){tier=t;document.getElementById('tl').textContent=T[t][0];document.getElementById('ta').textContent='$'+T[t][1];document.getElementById('msg').style.display='none';document.getElementById('ov').classList.add('on')}
 function closeM(){document.getElementById('ov').classList.remove('on')}
